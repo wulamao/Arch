@@ -1,4 +1,5 @@
-
+#ifndef EVENT_BEHAVIOR_H_
+#define EVENT_BEHAVIOR_H_
 
 /* create event container */
 extern void* eq_init(void);
@@ -15,3 +16,4 @@ extern void* eq_iterator(void *c);
 /* event queue is empty*/
 int eq_is_empty(void* c);
 
+#endif

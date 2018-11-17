@@ -1,3 +1,5 @@
+#ifndef CB_BEHAVIOR_H_
+#define CB_BEHAVIOR_H_
 
 /* create cb container */
 extern void* cbq_init(void);
@@ -15,3 +17,5 @@ extern void* cbq_iterator(void *c);
 extern void* cbq_sort(void *c);
 /* cb queue is empty*/
 int cbq_is_empty(void* c);
+
+#endif

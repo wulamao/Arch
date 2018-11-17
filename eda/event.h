@@ -1,4 +1,7 @@
+#ifndef EVENT_H_
+#define EVENT_H_
 
+#include "event_behavior.h"
 
 /**
  * define event container structure.
@@ -107,3 +110,5 @@ typedef struct _Cb_manager_t
     /* sort */
     int (*is_empty)(CbContainer c);
 } Cb_manager_t;
+
+#endif

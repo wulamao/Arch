@@ -1,9 +1,8 @@
-
-#include "event.h"
+#include "cbk_behavior.h"
 #include "queue.h"
 
 /* create cb container */
-void* cbq_init(void)
+void *cbq_init(void)
 {
     return queue_new();
 }
@@ -14,28 +13,28 @@ void cbq_del(void* c)
     queue_free((Queue *)c);
 }
 /* cb register*/
-void* cbq_push(void* c, void *ev)
+void *cbq_push(void* c, void *cb)
 {
-    queue_push_head((Queue *)c, ev);
+    queue_push_head((Queue *)c, cb);
 }
 
 /* cb remove*/
-void* cbq_pop(void* c)
+void *cbq_pop(void* c)
 {
     return queue_pop_tail((Queue *)c);
 }
 /* cb lookup*/
-void* cbq_lookup(void* c, unsigned int method)
+void *cbq_lookup(void* c, unsigned int method)
 {
     return 0;
 }
 /* cb traversal*/
-void* cbq_iterator(void* c)
+void *cbq_iterator(void* c)
 {
     return 0;
 }
 /* cb sort*/
-void* cbq_sort(void* c)
+void *cbq_sort(void* c)
 {
     return 0;
 }

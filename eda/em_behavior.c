@@ -1,5 +1,4 @@
-
-#include "event.h"
+#include "em_behavior.h"
 #include "queue.h"
 
 /* create event container */
@@ -24,11 +23,7 @@ void* eq_pop(void* c)
 {
     return queue_pop_tail((Queue *)c);
 }
-/* event lookup*/
-void* eq_lookup(void* c, unsigned int method)
-{
-    return 0;
-}
+
 /* event traversal*/
 void* eq_iterator(void* c)
 {

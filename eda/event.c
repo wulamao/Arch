@@ -1,76 +1,81 @@
+
 #include "event.h"
-
-#include "event_behavior.h"
-#include "cb_behavior.h"
-
-//# 注册回调函数
-    //涉及到 设置优先级等
-//# 事件入队出队 (封装成一个函数)
-
+#include "callback_manager.h"
+/**
+ * define event value structure.
+ */
+typedef struct _Event_value_t
+{
+    /* the address of container where saves call back functions */
+    void *cb_head;
+    /* pass parameter */
+    void *arg;
+    /* context */
+    void *context;
+    /* describe string */
+    char *des;
+} Event_value_t;
 
 /**
- * event manager entity.
+ * define event pair structure.
  */
-Event_manager_t EManager =
+typedef struct _Event_pair_t
 {
-    .init      = eq_init,
-    .del       = eq_del,
-    .push      = eq_push,
-    .pop       = eq_pop,
-    .lookup    = eq_lookup,
-    .iterator  = eq_iterator,
-    .is_empty  = eq_is_empty,
-};
+    /* event message type */
+    Event_msg_t key;
+    /* event */
+    Event_value_t* value;
+    /* cb manager */
+    Cbk_manager_t* cbkm;
+} Event_pair_t;
 
-/**
- * cb manager entity.
- */
-Cb_manager_t CBManager =
-{
-    .create     = cbq_init,
-    .destroy    = cbq_del,
-    .push       = cbq_push,
-    .pop        = cbq_pop,
-    .lookup     = cbq_lookup,
-    .iterator   = cbq_iterator,
-    .sort       = cbq_sort,
-    .is_empty   = cbq_is_empty,
-};
 
-void* event_init(void)
+Event_pair_t *new_event(Event_msg_t msg_no,
+                        void *head,
+                        void *arg,
+                        void *context,
+                        char *str,
+                        void *cbkm
+                        )
 {
-    return EManager.init();
+    Cbk_manager_t *cbkm_ = cbkm;
+    Event_pair_t *event = (Event_pair_t *)malloc(sizeof(Event_pair_t));
+    event->value = (Event_value_t *)malloc(sizeof(Event_value_t));
+
+    event->key = msg_no;
+    event->value->cb_head = head;
+    event->value->arg     = arg;
+    event->value->context = context;
+    event->value->des     = str;
+    event->cbkm           = cbkm_;
+
+    return event;
 }
 
-void* cb_init(void)
+void delete_event(void *event)
 {
-    return CBManager.create();
+    free(event);
 }
 
-void* event_push(EventContainer* event_queue, void* e)
+void cb_reg_event(void *event, void *cbk)
 {
-    EManager.push(event_queue, e);
+    Event_t *event_ = event;
+    cbkm_push(event_->cbkm, cbk);
 }
 
-void* cb_reg(Event_pair_t* event_no, void* cb)
+void cb_iterator_event(void *event)
 {
-    CBManager.push(event_no->event.cb_head, cb);
+    Event_t *event_ = event;
+    cbkm_iterator(event_->cbkm, event_->value->arg, event_->value->context);
 }
 
-int event_check(EventContainer* event_queue)
+unsigned int get_emsg_num(void)
 {
-    // while event queue is not empty
-    if (!eq_is_empty(event_queue))
-    {
-        // get event msg
-        Event_pair_t* ev = (Event_pair_t *)EManager.pop(event_queue);
-        // while cb queue is not empty
-        while (!cbq_is_empty(ev->event.cb_head))
-        {
-            Cb_t* cbx = (Cb_t *)CBManager.pop(ev->event.cb_head);
-            cbx->func(ev->event.arg,ev->event.context);
-        }
-    } 
-
-    return 0;
+    return EMSG_MAX;
 }
+
+unsigned int get_event_type(void *event)
+{
+    Event_t *_event = event;
+    return _event->key;
+ }

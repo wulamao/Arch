@@ -14,13 +14,13 @@ void eq_del(void* c)
     queue_free((Queue *)c);
 }
 /* cb register*/
-void* eq_push(void* c, Event_pair_t *ev)
+void* eq_push(void* c, void *ev)
 {
     queue_push_head((Queue *)c, ev);
 }
 
 /* cb remove*/
-void* eq_pop(void* c, Event_pair_t *ev)
+void* eq_pop(void* c)
 {
     return queue_pop_tail((Queue *)c);
 }

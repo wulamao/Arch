@@ -6,7 +6,7 @@ extern void* eq_init(void);
 /* delete event container */
 extern void eq_del(void *c);
 /* cb register*/
-extern void* eq_push(void *c, Event_pair_t *ev);
+extern void* eq_push(void *c, void *ev);
 /* cb remove*/
 extern void* eq_pop(void *c);
 /* event lookup*/

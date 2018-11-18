@@ -71,7 +71,7 @@ typedef struct _Event_manager_t
     /* delete event container */
     void (*del)(EventContainer c);
     /* cb register*/
-    void* (*push)(EventContainer c, Cb_t *cb);
+    void* (*push)(EventContainer c, void *cb);
     /* cb remove*/
     void* (*pop)(EventContainer c);
     /* event lookup*/
@@ -100,7 +100,7 @@ typedef struct _Cb_manager_t
     /* cb push */
     void* (*push)(CbContainer c, void* data);
     /* cb pop */
-    CbContainer (*pop)(CbContainerc);
+    CbContainer (*pop)(CbContainer c);
     /* lookup */
     void* (*lookup)(CbContainer c, unsigned int method);
     /* cb queue traversal */
@@ -110,5 +110,23 @@ typedef struct _Cb_manager_t
     /* sort */
     int (*is_empty)(CbContainer c);
 } Cb_manager_t;
+
+
+
+
+
+
+extern void* event_init(void);
+extern void* event_push(EventContainer* event_queue, void* e);
+extern int event_check(EventContainer* event_queue);
+
+
+
+
+
+
+
+
+
 
 #endif

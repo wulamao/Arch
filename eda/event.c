@@ -54,6 +54,8 @@ Event_pair_t *new_event(Event_msg_t msg_no,
 
 void delete_event(void *event)
 {
+    Event_pair_t *event_ = event;
+    free(event_->value);
     free(event);
 }
 

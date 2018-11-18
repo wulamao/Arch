@@ -57,10 +57,12 @@ int event_thread(struct pt *pt)
     em_push(em, event1);
     em_push(em, event1);
     em_push(em, event1);
+    em_push(em, event1);
+    em_push(em, event1);
+    em_push(em, event1);
 
     cb_reg_event(event1, cbk1);
     cb_reg_event(event1, cbk2);
-
     cb_reg_event(event2, cbk3);
 
     while (1)

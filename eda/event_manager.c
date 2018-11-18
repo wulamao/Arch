@@ -81,7 +81,6 @@ void em_iterator(void *em)
     Event_manager_t *em_ = em;
     while(!em_->is_empty(em_->container))
     {
-        printf(" @@@ \n");
         Event_t *event = em_pop(em_);
         printf("event_type : %d ==== \n", get_event_type(event));
         cb_iterator_event(event);

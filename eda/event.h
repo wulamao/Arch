@@ -7,6 +7,7 @@
 typedef enum {
     emsg_no1 = 0,
     emsg_no2,
+    emsg_no3,
     EMSG_MAX
 } Event_msg_t;
 

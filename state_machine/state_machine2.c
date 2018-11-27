@@ -14,55 +14,41 @@
 状态转移图:
          s1      s2       s3
 事件A    s2      s3       s1
-事件B    s1      s2       s2
+事件B    s1      s2       s1
 事件C    s1      s2       s3
-事件D    s3      s1       s3
+事件D    ...
 
 */
-
+ 
+ 
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NUM_STATE 3
-#define NUM_EVNET 4
-
-enum state
-{
+enum state  {
+    state0,
     state1,
-    state2,
-    state3
+    state2
 };
 
-enum event
-{
+
+enum event  {
     event_A,
     event_B,
     event_C,
     event_D
 };
 
-enum state state_matrix[NUM_EVNET][NUM_STATE] =
+#define state_num 4
+typedef void (*func )(void);
+typedef struct __state_node {
+    unsigned char next_state[state_num];
+    func cb;
+}state_node;
+
+void state0_cb()
 {
-    //state1 state2 state3
-    {state2, state3, state1}, //event_A
-    {state1, state2, state2}, //event_B
-    {state1, state2, state3}, //event_C
-    {state3, state1, state3}  //event_D
-};
-
-typedef void (*func_cb)(void);
-
-
-void state1_cb();
-void state2_cb();
-void state3_cb();
-
-func_cb cb[NUM_STATE] =
-{
-    state1_cb,
-    state2_cb,
-    state3_cb
-};
+    printf("state 000\n");
+}
 
 void state1_cb()
 {
@@ -74,44 +60,50 @@ void state2_cb()
     printf("state 222\n");
 }
 
-void state3_cb()
-{
-    printf("state 333\n");
-}
 
-void state_change(unsigned char event)
-{
-    last_state = state_matrix[event][last_state];
-}
 
-void state_out(void)
-{
-    cb[last_state]();
-}
+state_node s_node[3] = {
+    {
+        .next_state = {state0,state2,state0,state0},
+        .cb = state0_cb
+    },//state0
+    {
+        .next_state = {state1,state1,state0,state2},
+        .cb = state1_cb
+    },//state1
+    {
+        .next_state = {state0,state2,state2,state2},
+        .cb = state2_cb
+    }//state2
+};
+
 
 #define true 1
-unsigned char last_state = state1;
-void state_machine(unsigned char event, unsigned char update)
-{
-    if (update == true)
-        state_change(event);
+unsigned char last_state = state0;
+void state_machine(unsigned char event, unsigned char update){
+    if(update == true)
+        last_state = s_node[last_state].next_state[event];
     printf("last_state = %d\n", last_state);
-    state_out();
+    s_node[last_state].cb();
 }
 
 
 void test(void)
 {
+
+
+
     // emitted event_A
     unsigned char event = event_A;
     state_machine(event, true);
-    state_machine(event_B, true);
+
+
 }
 
 int main()
 {
-    test();
-
+    //test();
+    state_machine(event_B, 1);
 
     return 0;
 }

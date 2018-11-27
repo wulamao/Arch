@@ -13,7 +13,7 @@ struct pt pt1;
 int main() {
 
 
-    printf(" ==== \n");
+    printf(" S==== \n");
     event_thread(&pt1);
 
     return 0;

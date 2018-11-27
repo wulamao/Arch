@@ -1,88 +1,103 @@
 #include "event_manager.h"
-#include "em_behavior.h"
 #include "event.h"
+#include "queue.h"
 
-/**
- * define event manager structure.
- */
-typedef struct _Event_manager_t
+void *event_queue;
+//void *cbf_list;
+
+
+int event_push(void *queue, Event_t *event)
 {
-    void* container; // 事件容器指针
-
-    /* create event container */
-    void* (*init)(void);
-    /* delete event container */
-    void (*del)(void* c);
-    /* cb register*/
-    void* (*push)(void* c, void *cb);
-    /* cb remove*/
-    void* (*pop)(void* c);
-    /* event traversal*/
-    void* (*iterator)(void* c);
-    /* event container is empty */
-    int (*is_empty)(void* c);
-} Event_manager_t;
-
-
-Event_manager_t *new_em(void *init,
-                        void *del,
-                        void *push,
-                        void *pop,
-                        void *iterator,
-                        void *is_empty
-                        )
-{
-    Event_manager_t *em = (Event_manager_t*)malloc(sizeof(Event_manager_t));
-    em->init     = init;
-    em->del      = del;
-    em->push     = push;
-    em->pop      = pop;
-    em->iterator = iterator;
-    em->is_empty = is_empty;
-
-    em->container = em->init();
-    return em;
+    queue_push_tail(queue, event);
+	return 0;
 }
 
-void delete_em(void *em)
+Event_t * event_pop(void *queue)
 {
-    free(em);
+	return  queue_pop_head(queue);
 }
 
-void* em_init(void)
+int event_queue_is_empty(void *queue)
 {
-    Event_manager_t * em = new_em(eq_init,
-                                  eq_del,
-                                  eq_push,
-                                  eq_pop,
-                                  eq_iterator,
-                                  eq_is_empty
-                                  );
-    return em;
+	return queue_is_empty(queue);
 }
 
-void em_push(void *em, void *event)
+void event_sort(void *queue)
 {
-    Event_manager_t *em_ = em;
-    em_->push(em_->container, event);
+
 }
 
-void* em_pop(void *em)
+void event_emit(void *queue, Event_msg_t key, void *arg, void *context)
 {
-    Event_manager_t *em_ = em;
-    return em_->pop(em_->container);
+    Event_t event;
+    event.key = key;
+    event.arg  = arg;
+    event.context = context;
+	event_push(queue, &event);
 }
 
-//
-#include "callback_manager.h"
 
-void em_iterator(void *em)
+int cb_func_push(void *queue, Cbf_t *cbf)
 {
-    Event_manager_t *em_ = em;
-    while(!em_->is_empty(em_->container))
+    queue_push_tail(queue, cbf);
+	return 0;
+}
+
+void * cb_func_pop(void *queue)
+{
+	return  queue_pop_head(queue);
+}
+
+int cb_func_sort()
+{
+	return 0;
+}
+
+int cb_list_is_null()
+{
+	return 0;
+}
+
+int cb_list_iterator()
+{
+	return 0;
+}
+
+void new_cbf()
+{
+
+}
+
+void delete_cbf()
+{
+
+}
+
+
+int em_register(void *event, void *cbf)
+{
+    Event_t *_event = event;
+    queue_push_tail(_event->cbf_list, cbf);
+    return 0;
+}
+
+
+int em_push_event(void *event)
+{
+    event_push(&event_queue, event);
+    return 0;
+}
+
+int em_iterator(void)
+{
+    while(!event_queue_is_empty(&event_queue))
     {
-        Event_t *event = em_pop(em_);
-        printf("event_type : %d ==== \n", get_event_type(event));
-        cb_iterator_event(event);
+        Event_t *ev = event_pop(&event_queue);
+        while(!queue_is_empty(ev->cbf_list))
+        {
+            cb_func cbf = queue_pop_head(ev->cbf_list);
+            printf("%d %d\n", ev->arg, ev->context);
+            cbf(ev->arg, ev->context);
+        }
     }
 }

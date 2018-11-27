@@ -1,83 +1,54 @@
 
 #include "event.h"
-#include "callback_manager.h"
-/**
- * define event value structure.
- */
-typedef struct _Event_value_t
+#include "queue.h"
+
+
+
+typedef void *CB_LIST_DS;
+
+void *new_cbf_list(void)
 {
-    /* the address of container where saves call back functions */
-    void *cb_head;
-    /* pass parameter */
-    void *arg;
-    /* context */
-    void *context;
-    /* describe string */
-    char *des;
-} Event_value_t;
+    return queue_new();
+}
 
-/**
- * define event pair structure.
- */
-typedef struct _Event_pair_t
-{
-    /* event message type */
-    Event_msg_t key;
-    /* event */
-    Event_value_t* value;
-    /* cb manager */
-    Cbk_manager_t* cbkm;
-} Event_pair_t;
-
-
-Event_pair_t *new_event(Event_msg_t msg_no,
-                        void *head,
+Event_t *new_event(Event_msg_t msg_no,
+                        unsigned int priority,
+                        //void *cbf_list,
                         void *arg,
                         void *context,
-                        char *str,
-                        void *cbkm
+                        const char *str
                         )
 {
-    Cbk_manager_t *cbkm_ = cbkm;
-    Event_pair_t *event = (Event_pair_t *)malloc(sizeof(Event_pair_t));
-    event->value = (Event_value_t *)malloc(sizeof(Event_value_t));
-
-    event->key = msg_no;
-    event->value->cb_head = head;
-    event->value->arg     = arg;
-    event->value->context = context;
-    event->value->des     = str;
-    event->cbkm           = cbkm_;
-
+    //Cbk_manager_t *cbkm_ = cbkm;
+    Event_t *event    = (Event_t *)malloc(sizeof(Event_t));
+    event->key        = msg_no;
+    event->cbf_list   = new_cbf_list();
+    event->arg        = arg;
+    event->context    = context;
+    event->describe   = str;
     return event;
 }
 
+
+
 void delete_event(void *event)
 {
-    Event_pair_t *event_ = event;
-    free(event_->value);
+    Event_t *event_ = event;
+    queue_free(event_->cbf_list);
     free(event);
 }
 
-void cb_reg_event(void *event, void *cbk)
-{
-    Event_t *event_ = event;
-    cbkm_push(event_->cbkm, cbk);
-}
-
-void cb_iterator_event(void *event)
-{
-    Event_t *event_ = event;
-    cbkm_iterator(event_->cbkm, event_->value->arg, event_->value->context);
-}
 
 unsigned int get_emsg_num(void)
 {
     return EMSG_MAX;
 }
 
-unsigned int get_event_type(void *event)
+void set_event_para(Event_t *ev, void *arg,void *context)
 {
-    Event_t *_event = event;
-    return _event->key;
- }
+    ev->arg = arg;
+    ev->context = context;
+}
+
+
+
